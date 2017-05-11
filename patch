@@ -1,0 +1,99 @@
+diff --git a/samples/companionService/authentication.js b/samples/companionService/authentication.js
+index 982e665..c07b8d0 100644
+--- a/samples/companionService/authentication.js
++++ b/samples/companionService/authentication.js
+@@ -19,7 +19,7 @@ var DSN_MIN_LENGTH = 1;
+ 
+ var UUID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+ 
+-var oAuthServer = 'https://' + config.lwaRedirectHost + '/ap/oa';
++var oAuthServer = 'https://' + config.lwaRedirectHost + '/oauth/2.0/authorize';
+ var lwaProdAuthUrl = oAuthServer + '?client_id=' + config.clientId + '&response_type=code&redirect_uri=' + config.redirectUrl;
+ 
+ /**
+@@ -72,7 +72,7 @@ function redirectToDeviceAuthenticate(deviceInfo, regCode, res) {
+     var scopeData = {};
+     scopeData['alexa:all'] = productScope;
+ 
+-    var scopeDataStr = '&scope=' + encodeURIComponent('alexa:all') + '&state=' + encodeURIComponent(state) + '&scope_data=' + encodeURIComponent(JSON.stringify(scopeData));
++    var scopeDataStr = '&scope=' + encodeURIComponent('basic') + '&state=' + encodeURIComponent(state) + '&scope_data=' + encodeURIComponent(JSON.stringify(scopeData));
+     var authUrl = lwaProdAuthUrl + scopeDataStr;
+ 
+     pendingStateToRegCode[state] = regCode;
+@@ -184,7 +184,7 @@ auth.getAccessToken = function(sessionId, callback) {
+         return;
+     }
+ 
+-    var options = getLwaPostOptions('/auth/o2/token');
++    var options = getLwaPostOptions('/oauth/2.0/token');
+     var reqGrant = 'grant_type=refresh_token' +
+         '&refresh_token=' + refreshToken +
+         '&client_id=' + config.clientId +
+@@ -278,7 +278,7 @@ auth.authresponse = function (authCode, stateCode, callback) {
+     var regCode = pendingStateToRegCode[stateCode];
+     var sessionId = regCodeToSessionId[regCode];
+ 
+-    var options = getLwaPostOptions('/auth/o2/token');
++    var options = getLwaPostOptions('/oauth/2.0/token');
+     var reqGrant = 'grant_type=authorization_code' +
+         '&code=' + authCode +
+         '&redirect_uri=' + config.redirectUrl +
+diff --git a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java
+index 32ac11d..7b05de6 100644
+--- a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java
++++ b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java
+@@ -101,6 +101,7 @@ public class AVSClient implements ConnectionListener {
+ 
+     private HttpClient httpClient;
+     private URL host;
++    private static String dsn = "";
+ 
+     private SslContextFactory sslContextFactory;
+     private static String accessToken = "";
+@@ -130,11 +131,12 @@ public class AVSClient implements ConnectionListener {
+      *            The listener for checking that the downchannel has been set up
+      * @throws Exception
+      */
+-    public AVSClient(URL host, MultipartParserConsumer multipartParserConsumer,
++    public AVSClient(URL host, String dsn, MultipartParserConsumer multipartParserConsumer,
+             SslContextFactory sslContextFactory, ParsingFailedHandler parsingFailedHandler,
+             ResultListener resultListener) throws Exception {
+         http2Client = new HTTP2Client();
+         this.host = host;
++	this.dsn = dsn;
+         this.sslContextFactory = sslContextFactory;
+         requestQueue = new LinkedBlockingDeque<>();
+         requestResponseParser = new MultipartParser(multipartParserConsumer);
+@@ -268,6 +270,7 @@ public class AVSClient implements ConnectionListener {
+     private void doRequestActual(Request request, Optional<RequestListener> requestListener,
+             MultipartParser multipartParser) throws AVSException, IOException {
+         request.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
++        request.header(HttpHeaders.DSN, dsn);
+ 
+         InputStreamResponseListener responseListener = new InputStreamResponseListener();
+         Response response;
+diff --git a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClientFactory.java b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClientFactory.java
+index c641c0d..3f67e2e 100644
+--- a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClientFactory.java
++++ b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClientFactory.java
+@@ -28,7 +28,7 @@ public class AVSClientFactory {
+     public AVSClient getAVSClient(DirectiveEnqueuer directiveEnqueuer,
+             ParsingFailedHandler parsingFailedHandler, ResultListener resultListener)
+             throws Exception {
+-        return new AVSClient(config.getAvsHost(), directiveEnqueuer, new SslContextFactory(),
++        return new AVSClient(config.getAvsHost(), config.getDsn(), directiveEnqueuer, new SslContextFactory(),
+                 parsingFailedHandler, resultListener);
+     }
+ }
+diff --git a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/HttpHeaders.java b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/HttpHeaders.java
+index 3ff5dec..8a4ff26 100644
+--- a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/HttpHeaders.java
++++ b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/HttpHeaders.java
+@@ -17,6 +17,7 @@ public class HttpHeaders {
+     public static final String CONTENT_DISPOSITION = "Content-Disposition";
+     public static final String CONTENT_ID = "Content-ID";
+     public static final String AUTHORIZATION = "Authorization";
++    public static final String DSN = "Dueros-Device-Id";
+ 
+     public static class Parameters {
+         public static final String BOUNDARY = "boundary";
