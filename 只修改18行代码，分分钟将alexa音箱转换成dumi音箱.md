@@ -1,4 +1,4 @@
-# 只修改17行代码，分分钟将alexa音箱转换成dumi音箱
+# 只修改18行代码，分分钟将alexa音箱转换成dumi音箱
 
 
 
@@ -42,7 +42,7 @@ var config = {
 +        "lwaUrl":"https://openapi.baidu.com",
 ```
 
-- 下载[patch](https://github.com/cyluo/dumi/blob/master/patch)文件，在alexa的根目录下运行git apply patch。（10行）
+- 下载[patch](https://github.com/cyluo/dumi/blob/master/patch)文件，在alexa的根目录下运行git apply patch。（12行）
 - 建议参照[amazon链接](https://github.com/alexa/alexa-avs-sample-app/wiki/Sample-App-Log-Out-Instructions)清除amazon的登录信息。
 - 在samples/javaclient/ 目录下，运行mvn install 重新编译app。samples/companionService/ 目录下 运行npm start,  samples/javaclient/目录下运行 mvn exec:exec，启动并跳转到baidu登录页面，登录成功后，尝试和dumi说上几句话吧:  
 		
