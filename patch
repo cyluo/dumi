@@ -42,6 +42,17 @@ diff --git a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClien
 index 32ac11d..7b05de6 100644
 --- a/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java
 +++ b/samples/javaclient/src/main/java/com/amazon/alexa/avs/http/AVSClient.java
+@@ -74,8 +74,8 @@ public class AVSClient implements ConnectionListener {
+     private static final int REQUEST_ATTEMPTS = 3;
+     private static final long REQUEST_RETRY_DELAY_MS = 1000;
+
+-    private static final String EVENTS_ENDPOINT = "/v20160207/events";
+-    private static final String DIRECTIVES_ENDPOINT = "/v20160207/directives";
++    private static final String EVENTS_ENDPOINT = "/dcs/avs-compatible-v20160207/events";
++    private static final String DIRECTIVES_ENDPOINT = "/dcs/avs-compatible-v20160207/directives";
+     private final BlockingQueue<AVSRequest> requestQueue;
+
+     static final String METADATA_NAME = "metadata";
 @@ -101,6 +101,7 @@ public class AVSClient implements ConnectionListener {
  
      private HttpClient httpClient;
