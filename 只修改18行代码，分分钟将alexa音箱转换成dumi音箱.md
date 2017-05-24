@@ -17,7 +17,7 @@
 		 what's your name ?   what's the weather today? 。（建议在翻墙后的网络环境下使用)
 
 
-### 只修改17行代码，分分钟将alexa变成dumi
+### 只修改18行代码，分分钟将alexa变成dumi
 
  - 修改samples/companionService/config.js中的帐号登录信息（4行)：
 ```html
