@@ -35,15 +35,12 @@ var config = {
  - 修改samples/javaclient/config.json （2行)
 ```html
 -    "avsHost":"https://avs-alexa-na.amazon.com",
-+    "avsHost":"https://avs-dumi-na.baidu.com",
++    "avsHost":"https://dueros-h2.baidu.com",
      "companionApp":{
          "localPort":8443,
 -        "lwaUrl":"https://api.amazon.com",
 +        "lwaUrl":"https://openapi.baidu.com",
 ```
-- 修改hosts文件(linux, mac, raspberry pi系统中/etc/hosts, windows的C:\Winnt\System32\Drivers\Etc )，在文件中添加域名映射, 指向度秘服务的测试址（1行）。
-
-		10.36.253.174 avs-dumi-na.baidu.com
 
 - 下载[patch](https://github.com/cyluo/dumi/blob/master/patch)文件，在alexa的根目录下运行git apply patch。（10行）
 - 建议参照[amazon链接](https://github.com/alexa/alexa-avs-sample-app/wiki/Sample-App-Log-Out-Instructions)清除amazon的登录信息。
